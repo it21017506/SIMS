@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Class Schedules</title>
+    <style>
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid black; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>Class Schedules</h1>
+    <a th:href="@{/schedules/add}">Add New Schedule</a>
+    <br><br>
+    <a th:href="@{/students/enroll}">Back to Student Enrollment</a>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Class Name</th>
+                <th>Instructor</th>
+                <th>Time</th>
+                <th>Room</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="schedule : ${schedules}">
+                <td th:text="${schedule.id}"></td>
+                <td th:text="${schedule.className}"></td>
+                <td th:text="${schedule.instructor}"></td>
+                <td th:text="${schedule.time}"></td>
+                <td th:text="${schedule.room}"></td>
+            </tr>
+        </tbody>
+    </table>
+    <p th:if="${#lists.isEmpty(schedules)}" style="color: red;">No schedules found.</p>
+</body>
+</html>

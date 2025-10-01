@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Student Enrollment</title>
+</head>
+<body>
+    <h1>Enroll Student</h1>
+    <div th:if="${message}" th:text="${message}" style="color: green;"></div>
+    <form th:action="@{/students/enroll}" th:object="${student}" method="post">
+        <label>First Name: <input type="text" th:field="*{firstName}" /></label><br>
+        <label>Last Name: <input type="text" th:field="*{lastName}" /></label><br>
+        <label>Email: <input type="email" th:field="*{email}" /></label><br>
+        <button type="submit">Enroll</button>
+    </form>
+    <br>
+    <a th:href="@{/students/list}">View All Students</a>
+    <br><br>
+    <a th:href="@{/schedules/add}">Manage Class Schedules</a>
+</body>
+</html>

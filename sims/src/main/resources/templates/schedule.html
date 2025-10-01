@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Add Class Schedule</title>
+</head>
+<body>
+    <h1>Add Class Schedule</h1>
+    <div th:if="${message}" th:text="${message}" style="color: green;"></div>
+    <form th:action="@{/schedules/add}" th:object="${classSchedule}" method="post">
+        <label>Class Name: <input type="text" th:field="*{className}" /></label><br>
+        <label>Instructor: <input type="text" th:field="*{instructor}" /></label><br>
+        <label>Time: <input type="text" th:field="*{time}" placeholder="e.g., 10:00-11:30" /></label><br>
+        <label>Room: <input type="text" th:field="*{room}" /></label><br>
+        <button type="submit">Add Schedule</button>
+    </form>
+    <br>
+    <a th:href="@{/schedules/list}">View All Schedules</a>
+    <br><br>
+    <a th:href="@{/students/enroll}">Back to Student Enrollment</a>
+</body>
+</html>
