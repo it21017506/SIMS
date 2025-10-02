@@ -3,60 +3,76 @@
 <head>
     <title>Class Schedules</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Calibre:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-            color: #00ffcc;
-            font-family: 'Orbitron', sans-serif;
+            background-color: #ffffff;
+            color: #333333;
+            font-family: 'Calibre', sans-serif;
         }
         .glass {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(0, 0, 0, 0.1);
             border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         .neon-table th {
-            background: #00ffcc;
-            color: #0f0c29;
+            background: #4CAF50;
+            color: white;
         }
         .neon-table td {
             transition: all 0.3s ease;
         }
         .neon-table tr:hover td {
-            background: rgba(0, 255, 204, 0.2);
+            background: #e0e0e0;
             transform: scale(1.01);
         }
     </style>
 </head>
 <body class="min-h-screen p-4">
     <div class="glass p-6 max-w-4xl mx-auto">
-        <h1 class="text-4xl text-center mb-6 text-white">Class Schedules</h1>
+        <h1 class="text-4xl text-center mb-6">Class Schedules</h1>
         <div class="text-center mb-4 space-x-4">
-            <a th:href="@{/schedules/add}" class="text-cyan-300 hover:text-purple-400">Add New Schedule</a>
-            <a th:href="@{/students/enroll}" class="text-cyan-300 hover:text-purple-400">Back to Student Enrollment</a>
+            <a th:href="@{/schedules/add}" class="text-blue-600 hover:text-blue-800">Add New Schedule</a>
+            <a th:href="@{/students/enroll}" class="text-blue-600 hover:text-blue-800">Back to Student Enrollment</a>
         </div>
-        <table class="neon-table w-full text-white">
+        <table class="neon-table w-full">
             <thead>
                 <tr>
-                    <th class="p-2">ID</th>
+                    <th class="p-2 hidden">ID</th>
+                    <th class="p-2">Student ID</th>
                     <th class="p-2">Class Name</th>
                     <th class="p-2">Instructor</th>
                     <th class="p-2">Time</th>
                     <th class="p-2">Room</th>
+                    <th class="p-2">Actions</th>
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="schedule : ${schedules}">
-                    <td class="p-2" th:text="${schedule.id}"></td>
+                <tr th:each="schedule, stat : ${schedules}">
+                    <td class="p-2 hidden" th:text="${schedule.id}"></td>
+                    <td class="p-2" th:text="${stat.count}"></td>
                     <td class="p-2" th:text="${schedule.className}"></td>
                     <td class="p-2" th:text="${schedule.instructor}"></td>
                     <td class="p-2" th:text="${schedule.time}"></td>
                     <td class="p-2" th:text="${schedule.room}"></td>
+                    <td class="p-2">
+                        <form th:action="@{/schedules/edit/{id}(id=${schedule.id})}" method="get" style="display:inline;">
+                            <button type="submit" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </form>
+                        <form th:action="@{/schedules/delete/{id}(id=${schedule.id})}" method="post" onsubmit="return confirm('Are you sure you want to delete this schedule?');" style="display:inline;">
+                            <button type="submit" class="bg-red-500 text-white p-2 rounded hover:bg-red-600">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </form>
+                    </td>
                 </tr>
             </tbody>
         </table>
-        <p th:if="${#lists.isEmpty(schedules)}" class="text-center mt-4 text-red-300">No schedules found.</p>
+        <p th:if="${#lists.isEmpty(schedules)}" class="text-center mt-4 text-red-600">No schedules found.</p>
     </div>
 </body>
 </html>
