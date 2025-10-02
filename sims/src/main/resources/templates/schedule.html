@@ -2,20 +2,58 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Add Class Schedule</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: #00ffcc;
+            font-family: 'Orbitron', sans-serif;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+        }
+        .neon-btn {
+            background: #00ffcc;
+            color: #0f0c29;
+            transition: all 0.3s ease;
+        }
+        .neon-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px #00ffcc, 0 0 30px #00ffcc;
+        }
+    </style>
 </head>
-<body>
-    <h1>Add Class Schedule</h1>
-    <div th:if="${message}" th:text="${message}" style="color: green;"></div>
-    <form th:action="@{/schedules/add}" th:object="${classSchedule}" method="post">
-        <label>Class Name: <input type="text" th:field="*{className}" /></label><br>
-        <label>Instructor: <input type="text" th:field="*{instructor}" /></label><br>
-        <label>Time: <input type="text" th:field="*{time}" placeholder="e.g., 10:00-11:30" /></label><br>
-        <label>Room: <input type="text" th:field="*{room}" /></label><br>
-        <button type="submit">Add Schedule</button>
-    </form>
-    <br>
-    <a th:href="@{/schedules/list}">View All Schedules</a>
-    <br><br>
-    <a th:href="@{/students/enroll}">Back to Student Enrollment</a>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <div class="glass p-6 w-full max-w-md">
+        <h1 class="text-3xl text-center mb-6 text-white">Add Class Schedule</h1>
+        <div th:if="${message}" class="text-center mb-4 text-green-300" th:text="${message}"></div>
+        <form th:action="@{/schedules/add}" th:object="${classSchedule}" method="post" class="space-y-4">
+            <div>
+                <label class="block text-sm font-bold text-cyan-300">Class Name:</label>
+                <input type="text" th:field="*{className}" class="w-full p-2 bg-transparent border-b-2 border-cyan-300 text-white focus:outline-none focus:border-purple-400">
+            </div>
+            <div>
+                <label class="block text-sm font-bold text-cyan-300">Instructor:</label>
+                <input type="text" th:field="*{instructor}" class="w-full p-2 bg-transparent border-b-2 border-cyan-300 text-white focus:outline-none focus:border-purple-400">
+            </div>
+            <div>
+                <label class="block text-sm font-bold text-cyan-300">Time:</label>
+                <input type="text" th:field="*{time}" class="w-full p-2 bg-transparent border-b-2 border-cyan-300 text-white focus:outline-none focus:border-purple-400" placeholder="e.g., 10:00-11:30">
+            </div>
+            <div>
+                <label class="block text-sm font-bold text-cyan-300">Room:</label>
+                <input type="text" th:field="*{room}" class="w-full p-2 bg-transparent border-b-2 border-cyan-300 text-white focus:outline-none focus:border-purple-400">
+            </div>
+            <button type="submit" class="neon-btn w-full py-2 rounded-lg">Add Schedule</button>
+        </form>
+        <div class="mt-6 text-center space-x-4">
+            <a th:href="@{/schedules/list}" class="text-cyan-300 hover:text-purple-400">View All Schedules</a>
+            <a th:href="@{/students/enroll}" class="text-cyan-300 hover:text-purple-400">Back to Student Enrollment</a>
+        </div>
+    </div>
 </body>
 </html>

@@ -2,37 +2,61 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Class Schedules</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        table { border-collapse: collapse; width: 100%; }
-        th, td { border: 1px solid black; padding: 8px; text-align: left; }
-        th { background-color: #f2f2f2; }
+        body {
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: #00ffcc;
+            font-family: 'Orbitron', sans-serif;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+        }
+        .neon-table th {
+            background: #00ffcc;
+            color: #0f0c29;
+        }
+        .neon-table td {
+            transition: all 0.3s ease;
+        }
+        .neon-table tr:hover td {
+            background: rgba(0, 255, 204, 0.2);
+            transform: scale(1.01);
+        }
     </style>
 </head>
-<body>
-    <h1>Class Schedules</h1>
-    <a th:href="@{/schedules/add}">Add New Schedule</a>
-    <br><br>
-    <a th:href="@{/students/enroll}">Back to Student Enrollment</a>
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Class Name</th>
-                <th>Instructor</th>
-                <th>Time</th>
-                <th>Room</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="schedule : ${schedules}">
-                <td th:text="${schedule.id}"></td>
-                <td th:text="${schedule.className}"></td>
-                <td th:text="${schedule.instructor}"></td>
-                <td th:text="${schedule.time}"></td>
-                <td th:text="${schedule.room}"></td>
-            </tr>
-        </tbody>
-    </table>
-    <p th:if="${#lists.isEmpty(schedules)}" style="color: red;">No schedules found.</p>
+<body class="min-h-screen p-4">
+    <div class="glass p-6 max-w-4xl mx-auto">
+        <h1 class="text-4xl text-center mb-6 text-white">Class Schedules</h1>
+        <div class="text-center mb-4 space-x-4">
+            <a th:href="@{/schedules/add}" class="text-cyan-300 hover:text-purple-400">Add New Schedule</a>
+            <a th:href="@{/students/enroll}" class="text-cyan-300 hover:text-purple-400">Back to Student Enrollment</a>
+        </div>
+        <table class="neon-table w-full text-white">
+            <thead>
+                <tr>
+                    <th class="p-2">ID</th>
+                    <th class="p-2">Class Name</th>
+                    <th class="p-2">Instructor</th>
+                    <th class="p-2">Time</th>
+                    <th class="p-2">Room</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="schedule : ${schedules}">
+                    <td class="p-2" th:text="${schedule.id}"></td>
+                    <td class="p-2" th:text="${schedule.className}"></td>
+                    <td class="p-2" th:text="${schedule.instructor}"></td>
+                    <td class="p-2" th:text="${schedule.time}"></td>
+                    <td class="p-2" th:text="${schedule.room}"></td>
+                </tr>
+            </tbody>
+        </table>
+        <p th:if="${#lists.isEmpty(schedules)}" class="text-center mt-4 text-red-300">No schedules found.</p>
+    </div>
 </body>
 </html>
