@@ -33,6 +33,7 @@
 <body class="min-h-screen p-4">
     <div class="glass p-6 max-w-4xl mx-auto">
         <h1 class="text-4xl text-center mb-6">Student List</h1>
+        <div th:if="${message}" class="text-center mb-4 text-green-700" th:text="${message}"></div>
         <div class="text-center mb-4">
             <a th:href="@{/students/enroll}" class="text-blue-600 hover:text-blue-800">Back to Enrollment</a>
         </div>
@@ -40,7 +41,6 @@
             <thead>
                 <tr>
                     <th class="p-2 hidden">ID</th>
-                    <th class="p-2">Student ID</th>
                     <th class="p-2">First Name</th>
                     <th class="p-2">Last Name</th>
                     <th class="p-2">Email</th>
@@ -48,9 +48,8 @@
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="student, stat : ${students}">
+                <tr th:each="student : ${students}">
                     <td class="p-2 hidden" th:text="${student.id}"></td>
-                    <td class="p-2" th:text="${stat.count}"></td>
                     <td class="p-2" th:text="${student.firstName}"></td>
                     <td class="p-2" th:text="${student.lastName}"></td>
                     <td class="p-2" th:text="${student.email}"></td>

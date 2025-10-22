@@ -43,4 +43,59 @@ public class StudentController {
         model.addAttribute("students", service.getAllStudents());
         return "students";
     }
+
+    @GetMapping("/edit/{id}")
+    public String showEditStudentForm(@PathVariable String id, Model model) {
+        try {
+            Student student = service.getStudentById(id);
+            if (student == null) {
+                model.addAttribute("message", "Student not found!");
+                model.addAttribute("students", service.getAllStudents());
+                return "students";
+            }
+            model.addAttribute("student", student);
+            model.addAttribute("message", null);
+            return "edit-student";
+        } catch (Exception e) {
+            model.addAttribute("message", "Error retrieving student: " + e.getMessage());
+            logger.error("Error retrieving student with ID {}: {}", id, e.getMessage(), e);
+            model.addAttribute("students", service.getAllStudents());
+            return "students";
+        }
+    }
+
+    @PostMapping("/edit/{id}")
+    public String updateStudent(@PathVariable String id, @ModelAttribute Student student, Model model) {
+        logger.info("Received student for update: {}", student);
+        try {
+            student.setId(id);
+            service.updateStudent(student);
+            model.addAttribute("message", "Student updated successfully!");
+            model.addAttribute("students", service.getAllStudents());
+            return "students";
+        } catch (Exception e) {
+            model.addAttribute("message", "Error during update: " + e.getMessage());
+            logger.error("Update failed for student ID {}: {}", id, e.getMessage(), e);
+            model.addAttribute("student", student);
+            return "edit-student";
+        }
+    }
+
+    @PostMapping("/delete/{id}")
+    public String deleteStudent(@PathVariable String id, Model model) {
+        logger.info("Attempting to delete student with ID: {}", id);
+        try {
+            boolean deleted = service.deleteStudent(id);
+            if (deleted) {
+                model.addAttribute("message", "Student deleted successfully!");
+            } else {
+                model.addAttribute("message", "Student not found!");
+            }
+        } catch (Exception e) {
+            model.addAttribute("message", "Error during deletion: " + e.getMessage());
+            logger.error("Deletion failed for student ID {}: {}", id, e.getMessage(), e);
+        }
+        model.addAttribute("students", service.getAllStudents());
+        return "students";
+    }
 }

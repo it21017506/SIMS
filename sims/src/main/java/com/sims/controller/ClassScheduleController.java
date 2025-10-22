@@ -43,4 +43,55 @@ public class ClassScheduleController {
         model.addAttribute("schedules", service.getAllClassSchedules());
         return "schedules";
     }
+
+    @GetMapping("/edit/{id}")
+    public String showEditScheduleForm(@PathVariable String id, Model model) {
+        try {
+            ClassSchedule schedule = service.getClassScheduleById(id);
+            if (schedule == null) {
+                model.addAttribute("message", "Schedule not found!");
+                model.addAttribute("schedules", service.getAllClassSchedules());
+                return "schedules";
+            }
+            model.addAttribute("classSchedule", schedule);
+            model.addAttribute("message", null);
+            return "edit-schedule";
+        } catch (Exception e) {
+            model.addAttribute("message", "Error retrieving schedule: " + e.getMessage());
+            logger.error("Error retrieving schedule with ID {}: {}", id, e.getMessage(), e);
+            model.addAttribute("schedules", service.getAllClassSchedules());
+            return "schedules";
+        }
+    }
+
+    @PostMapping("/edit/{id}")
+    public String updateSchedule(@PathVariable String id, @ModelAttribute ClassSchedule classSchedule, Model model) {
+        logger.info("Received class schedule for update: {}", classSchedule);
+        try {
+            classSchedule.setId(id);
+            service.updateClassSchedule(classSchedule);
+            model.addAttribute("message", "Class schedule updated successfully!");
+            model.addAttribute("schedules", service.getAllClassSchedules());
+            return "schedules";
+        } catch (Exception e) {
+            model.addAttribute("message", "Error during update: " + e.getMessage());
+            logger.error("Update failed for schedule ID {}: {}", id, e.getMessage(), e);
+            model.addAttribute("classSchedule", classSchedule);
+            return "edit-schedule";
+        }
+    }
+
+    @PostMapping("/delete/{id}")
+    public String deleteSchedule(@PathVariable String id, Model model) {
+        logger.info("Attempting to delete schedule with ID: {}", id);
+        try {
+            service.deleteClassSchedule(id);
+            model.addAttribute("message", "Class schedule deleted successfully!");
+        } catch (Exception e) {
+            model.addAttribute("message", "Error during deletion: " + e.getMessage());
+            logger.error("Deletion failed for schedule ID {}: {}", id, e.getMessage(), e);
+        }
+        model.addAttribute("schedules", service.getAllClassSchedules());
+        return "schedules";
+    }
 }

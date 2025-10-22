@@ -33,6 +33,7 @@
 <body class="min-h-screen p-4">
     <div class="glass p-6 max-w-4xl mx-auto">
         <h1 class="text-4xl text-center mb-6">Class Schedules</h1>
+        <div th:if="${message}" class="text-center mb-4 text-green-700" th:text="${message}"></div>
         <div class="text-center mb-4 space-x-4">
             <a th:href="@{/schedules/add}" class="text-blue-600 hover:text-blue-800">Add New Schedule</a>
             <a th:href="@{/students/enroll}" class="text-blue-600 hover:text-blue-800">Back to Student Enrollment</a>
@@ -41,7 +42,6 @@
             <thead>
                 <tr>
                     <th class="p-2 hidden">ID</th>
-                    <th class="p-2">Student ID</th>
                     <th class="p-2">Class Name</th>
                     <th class="p-2">Instructor</th>
                     <th class="p-2">Time</th>
@@ -50,9 +50,8 @@
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="schedule, stat : ${schedules}">
+                <tr th:each="schedule : ${schedules}">
                     <td class="p-2 hidden" th:text="${schedule.id}"></td>
-                    <td class="p-2" th:text="${stat.count}"></td>
                     <td class="p-2" th:text="${schedule.className}"></td>
                     <td class="p-2" th:text="${schedule.instructor}"></td>
                     <td class="p-2" th:text="${schedule.time}"></td>
