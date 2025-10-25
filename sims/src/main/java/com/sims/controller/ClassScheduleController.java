@@ -2,11 +2,13 @@ package com.sims.controller;
 
 import com.sims.model.ClassSchedule;
 import com.sims.service.ClassScheduleService;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
@@ -25,8 +27,12 @@ public class ClassScheduleController {
     }
 
     @PostMapping("/add")
-    public String addSchedule(@ModelAttribute ClassSchedule classSchedule, Model model) {
+    public String addSchedule(@Valid @ModelAttribute ClassSchedule classSchedule, BindingResult bindingResult, Model model) {
         logger.info("Received class schedule for addition: {}", classSchedule);
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("message", "Validation errors occurred.");
+            return "schedule";
+        }
         try {
             service.addClassSchedule(classSchedule);
             model.addAttribute("message", "Class schedule added successfully!");
@@ -65,8 +71,12 @@ public class ClassScheduleController {
     }
 
     @PostMapping("/edit/{id}")
-    public String updateSchedule(@PathVariable String id, @ModelAttribute ClassSchedule classSchedule, Model model) {
+    public String updateSchedule(@PathVariable String id, @Valid @ModelAttribute ClassSchedule classSchedule, BindingResult bindingResult, Model model) {
         logger.info("Received class schedule for update: {}", classSchedule);
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("message", "Validation errors occurred.");
+            return "edit-schedule";
+        }
         try {
             classSchedule.setId(id);
             service.updateClassSchedule(classSchedule);

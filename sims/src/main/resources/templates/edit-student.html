@@ -35,14 +35,37 @@
             <div>
                 <label class="block text-sm font-bold">First Name:</label>
                 <input type="text" th:field="*{firstName}" class="w-full p-2 bg-gray-100 border-b-2 border-gray-300 text-gray-800 focus:outline-none focus:border-blue-400">
+                <div th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}" class="text-red-600"></div>
             </div>
             <div>
                 <label class="block text-sm font-bold">Last Name:</label>
                 <input type="text" th:field="*{lastName}" class="w-full p-2 bg-gray-100 border-b-2 border-gray-300 text-gray-800 focus:outline-none focus:border-blue-400">
+                <div th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}" class="text-red-600"></div>
             </div>
             <div>
                 <label class="block text-sm font-bold">Email:</label>
                 <input type="email" th:field="*{email}" class="w-full p-2 bg-gray-100 border-b-2 border-gray-300 text-gray-800 focus:outline-none focus:border-blue-400">
+                <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-red-600"></div>
+            </div>
+            <div>
+                <label class="block text-sm font-bold">Phone:</label>
+                <input type="tel" th:field="*{phone}" class="w-full p-2 bg-gray-100 border-b-2 border-gray-300 text-gray-800 focus:outline-none focus:border-blue-400">
+                <div th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}" class="text-red-600"></div>
+            </div>
+            <div>
+                <label class="block text-sm font-bold">Grade Level:</label>
+                <select th:field="*{gradeLevel}" class="w-full p-2 bg-gray-100 border-b-2 border-gray-300 text-gray-800 focus:outline-none focus:border-blue-400">
+                    <option value="">Select Grade Level</option>
+                    <option value="Freshman">Freshman</option>
+                    <option value="Sophomore">Sophomore</option>
+                    <option value="Junior">Junior</option>
+                    <option value="Senior">Senior</option>
+                </select>
+                <div th:if="${#fields.hasErrors('gradeLevel')}" th:errors="*{gradeLevel}" class="text-red-600"></div>
+            </div>
+            <div>
+                <label class="block text-sm font-bold">Enrollment Date:</label>
+                <input type="date" th:field="*{enrollmentDate}" class="w-full p-2 bg-gray-100 border-b-2 border-gray-300 text-gray-800 focus:outline-none focus:border-blue-400">
             </div>
             <button type="submit" class="neon-btn w-full py-2 rounded-lg">Update Student</button>
         </form>

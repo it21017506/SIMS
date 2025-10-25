@@ -2,11 +2,13 @@ package com.sims.controller;
 
 import com.sims.model.Student;
 import com.sims.service.StudentService;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
@@ -25,8 +27,12 @@ public class StudentController {
     }
 
     @PostMapping("/enroll")
-    public String enroll(@ModelAttribute Student student, Model model) {
+    public String enroll(@Valid @ModelAttribute Student student, BindingResult bindingResult, Model model) {
         logger.info("Received student for enrollment: {}", student);
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("message", "Validation errors occurred.");
+            return "enroll";
+        }
         try {
             service.enrollStudent(student);
             model.addAttribute("message", "Student enrolled successfully!");
@@ -65,8 +71,12 @@ public class StudentController {
     }
 
     @PostMapping("/edit/{id}")
-    public String updateStudent(@PathVariable String id, @ModelAttribute Student student, Model model) {
+    public String updateStudent(@PathVariable String id, @Valid @ModelAttribute Student student, BindingResult bindingResult, Model model) {
         logger.info("Received student for update: {}", student);
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("message", "Validation errors occurred.");
+            return "edit-student";
+        }
         try {
             student.setId(id);
             service.updateStudent(student);
@@ -94,6 +104,19 @@ public class StudentController {
         } catch (Exception e) {
             model.addAttribute("message", "Error during deletion: " + e.getMessage());
             logger.error("Deletion failed for student ID {}: {}", id, e.getMessage(), e);
+        }
+        model.addAttribute("students", service.getAllStudents());
+        return "students";
+    }
+
+    @PostMapping("/{studentId}/enroll-schedule/{scheduleId}")
+    public String enrollInSchedule(@PathVariable String studentId, @PathVariable String scheduleId, Model model) {
+        try {
+            service.enrollInSchedule(studentId, scheduleId);
+            model.addAttribute("message", "Student enrolled in schedule successfully!");
+        } catch (Exception e) {
+            model.addAttribute("message", "Error during enrollment: " + e.getMessage());
+            logger.error("Enrollment in schedule failed: {}", e.getMessage(), e);
         }
         model.addAttribute("students", service.getAllStudents());
         return "students";

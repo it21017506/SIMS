@@ -1,12 +1,16 @@
 package com.sims.service;
 
 import com.sims.model.ClassSchedule;
+import com.sims.model.Student;
 import com.sims.repository.ClassScheduleRepository;
+import com.sims.repository.StudentRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +21,10 @@ public class ClassScheduleService {
     @Autowired
     private ClassScheduleRepository classScheduleRepository;
 
+    @Autowired
+    private StudentRepository studentRepository; // For relations
+
+    @Transactional
     public void addClassSchedule(ClassSchedule classSchedule) {
         logger.info("Attempting to save class schedule: {}", classSchedule);
         try {
@@ -46,6 +54,7 @@ public class ClassScheduleService {
         }
     }
 
+    @Transactional
     public void updateClassSchedule(ClassSchedule classSchedule) {
         logger.info("Attempting to update class schedule: {}", classSchedule);
         try {
@@ -62,10 +71,21 @@ public class ClassScheduleService {
         }
     }
 
+    @Transactional
     public void deleteClassSchedule(String id) {
         logger.info("Attempting to delete class schedule with ID: {}", id);
         try {
-            if (classScheduleRepository.existsById(id)) {
+            Optional<ClassSchedule> scheduleOpt = classScheduleRepository.findById(id);
+            if (scheduleOpt.isPresent()) {
+                ClassSchedule schedule = scheduleOpt.get();
+                // Remove from students' schedules
+                for (String studentId : schedule.getStudentIds()) {
+                    Optional<Student> studentOpt = studentRepository.findById(studentId);
+                    studentOpt.ifPresent(student -> {
+                        student.getScheduleIds().remove(id);
+                        studentRepository.save(student);
+                    });
+                }
                 classScheduleRepository.deleteById(id);
                 logger.info("Class schedule deleted successfully with ID: {}", id);
             } else {

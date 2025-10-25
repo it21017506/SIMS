@@ -46,6 +46,7 @@
                     <th class="p-2">Instructor</th>
                     <th class="p-2">Time</th>
                     <th class="p-2">Room</th>
+                    <th class="p-2">Enrolled Students</th>
                     <th class="p-2">Actions</th>
                 </tr>
             </thead>
@@ -56,6 +57,7 @@
                     <td class="p-2" th:text="${schedule.instructor}"></td>
                     <td class="p-2" th:text="${schedule.time}"></td>
                     <td class="p-2" th:text="${schedule.room}"></td>
+                    <td class="p-2" th:text="${#lists.size(schedule.studentIds)}"></td>
                     <td class="p-2">
                         <form th:action="@{/schedules/edit/{id}(id=${schedule.id})}" method="get" style="display:inline;">
                             <button type="submit" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
