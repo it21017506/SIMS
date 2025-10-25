@@ -38,6 +38,13 @@
             <a th:href="@{/schedules/add}" class="text-blue-600 hover:text-blue-800">Add New Schedule</a>
             <a th:href="@{/students/enroll}" class="text-blue-600 hover:text-blue-800">Back to Student Enrollment</a>
         </div>
+        <div class="mb-4">
+            <form th:action="@{/schedules/search}" method="get" class="flex">
+                <input type="text" name="query" placeholder="Search by class name or instructor..." class="flex-grow p-2 border">
+                <button type="submit" class="bg-blue-500 text-white p-2">Search</button>
+            </form>
+            <a th:href="@{/schedules/report}" class="bg-green-500 text-white p-2 ml-2">Download Report</a>
+        </div>
         <table class="neon-table w-full">
             <thead>
                 <tr>
@@ -46,6 +53,8 @@
                     <th class="p-2">Instructor</th>
                     <th class="p-2">Time</th>
                     <th class="p-2">Room</th>
+                    <th class="p-2">Duration</th>
+                    <th class="p-2">Max Capacity</th>
                     <th class="p-2">Enrolled Students</th>
                     <th class="p-2">Actions</th>
                 </tr>
@@ -57,6 +66,8 @@
                     <td class="p-2" th:text="${schedule.instructor}"></td>
                     <td class="p-2" th:text="${schedule.time}"></td>
                     <td class="p-2" th:text="${schedule.room}"></td>
+                    <td class="p-2" th:text="${schedule.duration}"></td>
+                    <td class="p-2" th:text="${schedule.maxCapacity}"></td>
                     <td class="p-2" th:text="${#lists.size(schedule.studentIds)}"></td>
                     <td class="p-2">
                         <form th:action="@{/schedules/edit/{id}(id=${schedule.id})}" method="get" style="display:inline;">
@@ -69,6 +80,9 @@
                                 <i class="fas fa-trash-alt"></i>
                             </button>
                         </form>
+                        <a th:href="@{/schedules/{id}/enroll-students(id=${schedule.id})}" class="bg-yellow-500 text-white p-2 rounded hover:bg-yellow-600">
+                            <i class="fas fa-user-plus"></i>
+                        </a>
                     </td>
                 </tr>
             </tbody>

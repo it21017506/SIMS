@@ -6,10 +6,15 @@ import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/students")
@@ -120,5 +125,22 @@ public class StudentController {
         }
         model.addAttribute("students", service.getAllStudents());
         return "students";
+    }
+
+    @GetMapping("/search")
+    public String searchStudents(@RequestParam String query, Model model) {
+        List<Student> students = service.searchStudents(query);
+        model.addAttribute("students", students);
+        model.addAttribute("searchQuery", query);
+        return "students";
+    }
+
+    @GetMapping("/report")
+    public ResponseEntity<byte[]> generateStudentReport() {
+        byte[] report = service.generateStudentReport();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("attachment", "students-report.pdf");
+        return ResponseEntity.ok().headers(headers).body(report);
     }
 }

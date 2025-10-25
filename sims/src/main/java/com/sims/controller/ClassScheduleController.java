@@ -1,15 +1,23 @@
 package com.sims.controller;
 
 import com.sims.model.ClassSchedule;
+import com.sims.model.Student;
 import com.sims.service.ClassScheduleService;
+import com.sims.service.StudentService;
+
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/schedules")
@@ -18,6 +26,9 @@ public class ClassScheduleController {
 
     @Autowired
     private ClassScheduleService service;
+
+    @Autowired
+    private StudentService studentService;
 
     @GetMapping("/add")
     public String showAddScheduleForm(Model model) {
@@ -103,5 +114,49 @@ public class ClassScheduleController {
         }
         model.addAttribute("schedules", service.getAllClassSchedules());
         return "schedules";
+    }
+
+    @GetMapping("/search")
+    public String searchSchedules(@RequestParam String query, Model model) {
+        List<ClassSchedule> schedules = service.searchSchedules(query);
+        model.addAttribute("schedules", schedules);
+        model.addAttribute("searchQuery", query);
+        return "schedules";
+    }
+
+    @GetMapping("/report")
+    public ResponseEntity<byte[]> generateScheduleReport() {
+        byte[] report = service.generateScheduleReport();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("attachment", "schedules-report.pdf");
+        return ResponseEntity.ok().headers(headers).body(report);
+    }
+
+    @GetMapping("/{id}/enroll-students")
+    public String showEnrollStudentsForm(@PathVariable String id, Model model) {
+        ClassSchedule schedule = service.getClassScheduleById(id);
+        if (schedule == null) {
+            return "redirect:/schedules/list";
+        }
+        List<Student> allStudents = studentService.getAllStudents();
+        List<String> enrolledStudentIds = schedule.getStudentIds();
+        List<Student> availableStudents = allStudents.stream()
+            .filter(s -> !enrolledStudentIds.contains(s.getId()))
+            .toList();
+        model.addAttribute("schedule", schedule);
+        model.addAttribute("availableStudents", availableStudents);
+        return "enroll-student-to-schedule";
+    }
+
+    @PostMapping("/{id}/enroll-students")
+    public String enrollStudentsToSchedule(@PathVariable String id, @RequestParam String studentId, Model model) {
+        try {
+            studentService.enrollInSchedule(studentId, id); // Note: Calling studentService.enrollInSchedule
+            return "redirect:/schedules/" + id + "/enroll-students?success=true";
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
+            return showEnrollStudentsForm(id, model);
+        }
     }
 }

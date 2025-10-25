@@ -34,23 +34,33 @@
         <form th:action="@{/schedules/add}" th:object="${classSchedule}" method="post" class="space-y-4">
             <div>
                 <label class="block text-sm font-bold">Class Name:</label>
-                <input type="text" th:field="*{className}" class="w-full p-2 bg-gray-100 border-b-2 border-gray-300 text-gray-800 focus:outline-none focus:border-blue-400">
+                <input type="text" th:field="*{className}" class="w-full p-2 bg-gray-100 border-b-2 border-gray-300 text-gray-800 focus:outline-none focus:border-blue-400" required>
                 <div th:if="${#fields.hasErrors('className')}" th:errors="*{className}" class="text-red-600"></div>
             </div>
             <div>
                 <label class="block text-sm font-bold">Instructor:</label>
-                <input type="text" th:field="*{instructor}" class="w-full p-2 bg-gray-100 border-b-2 border-gray-300 text-gray-800 focus:outline-none focus:border-blue-400">
+                <input type="text" th:field="*{instructor}" class="w-full p-2 bg-gray-100 border-b-2 border-gray-300 text-gray-800 focus:outline-none focus:border-blue-400" required>
                 <div th:if="${#fields.hasErrors('instructor')}" th:errors="*{instructor}" class="text-red-600"></div>
             </div>
             <div>
                 <label class="block text-sm font-bold">Time:</label>
-                <input type="text" th:field="*{time}" class="w-full p-2 bg-gray-100 border-b-2 border-gray-300 text-gray-800 focus:outline-none focus:border-blue-400" placeholder="e.g., 10:00-11:30">
+                <input type="text" th:field="*{time}" class="w-full p-2 bg-gray-100 border-b-2 border-gray-300 text-gray-800 focus:outline-none focus:border-blue-400" placeholder="e.g., 10:00-11:30" required>
                 <div th:if="${#fields.hasErrors('time')}" th:errors="*{time}" class="text-red-600"></div>
             </div>
             <div>
                 <label class="block text-sm font-bold">Room:</label>
-                <input type="text" th:field="*{room}" class="w-full p-2 bg-gray-100 border-b-2 border-gray-300 text-gray-800 focus:outline-none focus:border-blue-400">
+                <input type="text" th:field="*{room}" class="w-full p-2 bg-gray-100 border-b-2 border-gray-300 text-gray-800 focus:outline-none focus:border-blue-400" required>
                 <div th:if="${#fields.hasErrors('room')}" th:errors="*{room}" class="text-red-600"></div>
+            </div>
+            <div>
+                <label class="block text-sm font-bold">Duration:</label>
+                <input type="text" th:field="*{duration}" class="w-full p-2 bg-gray-100 border-b-2 border-gray-300 text-gray-800 focus:outline-none focus:border-blue-400" placeholder="e.g., 1.5 hours" required>
+                <div th:if="${#fields.hasErrors('duration')}" th:errors="*{duration}" class="text-red-600"></div>
+            </div>
+            <div>
+                <label class="block text-sm font-bold">Max Capacity:</label>
+                <input type="text" th:field="*{maxCapacity}" class="w-full p-2 bg-gray-100 border-b-2 border-gray-300 text-gray-800 focus:outline-none focus:border-blue-400" placeholder="e.g., 30" required>
+                <div th:if="${#fields.hasErrors('maxCapacity')}" th:errors="*{maxCapacity}" class="text-red-600"></div>
             </div>
             <button type="submit" class="neon-btn w-full py-2 rounded-lg">Add Schedule</button>
         </form>

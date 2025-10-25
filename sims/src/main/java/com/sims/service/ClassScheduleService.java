@@ -1,5 +1,10 @@
 package com.sims.service;
 
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
 import com.sims.model.ClassSchedule;
 import com.sims.model.Student;
 import com.sims.repository.ClassScheduleRepository;
@@ -10,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,7 +27,7 @@ public class ClassScheduleService {
     private ClassScheduleRepository classScheduleRepository;
 
     @Autowired
-    private StudentRepository studentRepository; // For relations
+    private StudentRepository studentRepository;
 
     @Transactional
     public void addClassSchedule(ClassSchedule classSchedule) {
@@ -78,7 +83,6 @@ public class ClassScheduleService {
             Optional<ClassSchedule> scheduleOpt = classScheduleRepository.findById(id);
             if (scheduleOpt.isPresent()) {
                 ClassSchedule schedule = scheduleOpt.get();
-                // Remove from students' schedules
                 for (String studentId : schedule.getStudentIds()) {
                     Optional<Student> studentOpt = studentRepository.findById(studentId);
                     studentOpt.ifPresent(student -> {
@@ -96,5 +100,45 @@ public class ClassScheduleService {
             logger.error("Failed to delete class schedule: {}", e.getMessage(), e);
             throw e;
         }
+    }
+
+    public List<ClassSchedule> searchSchedules(String searchTerm) {
+        if (searchTerm == null || searchTerm.trim().isEmpty()) {
+            return getAllClassSchedules();
+        }
+        return classScheduleRepository.findByClassNameOrInstructorContainingIgnoreCase(searchTerm.trim());
+    }
+
+    public byte[] generateScheduleReport() {
+        List<ClassSchedule> schedules = getAllClassSchedules();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (PdfWriter writer = new PdfWriter(baos);
+             PdfDocument pdf = new PdfDocument(writer);
+             Document document = new Document(pdf)) {
+
+            document.add(new Paragraph("Class Schedule Report").setBold());
+            Table table = new Table(6);
+            table.addHeaderCell("ID");
+            table.addHeaderCell("Class Name");
+            table.addHeaderCell("Instructor");
+            table.addHeaderCell("Time");
+            table.addHeaderCell("Room");
+            table.addHeaderCell("Enrolled Students");
+
+            for (ClassSchedule schedule : schedules) {
+                table.addCell(schedule.getId());
+                table.addCell(schedule.getClassName());
+                table.addCell(schedule.getInstructor());
+                table.addCell(schedule.getTime());
+                table.addCell(schedule.getRoom());
+                table.addCell(String.valueOf(schedule.getStudentIds().size()));
+            }
+
+            document.add(table);
+        } catch (Exception e) {
+            logger.error("Failed to generate schedule report: {}", e.getMessage(), e);
+            throw new RuntimeException("Report generation failed");
+        }
+        return baos.toByteArray();
     }
 }

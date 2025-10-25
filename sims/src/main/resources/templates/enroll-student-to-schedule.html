@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Enroll Students to Schedule</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Calibre:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #ffffff;
+            color: #333333;
+            font-family: 'Calibre', sans-serif;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .neon-btn {
+            background: #4CAF50;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .neon-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 10px #4CAF50;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <div class="glass p-6 w-full max-w-md">
+        <h1 th:text="'Enroll Students to: ' + ${schedule.className}" class="text-3xl text-center mb-6">Enroll Students</h1>
+        <div th:if="${error}" class="text-center mb-4 text-red-600" th:text="${error}"></div>
+        <div th:if="${param.success}" class="text-center mb-4 text-green-700">Enrollment successful!</div>
+        <form th:action="@{/schedules/{id}/enroll-students(id=${schedule.id})}" method="post" class="space-y-4">
+            <div>
+                <label class="block text-sm font-bold">Select Student:</label>
+                <select name="studentId" class="w-full p-2 bg-gray-100 border-b-2 border-gray-300 text-gray-800 focus:outline-none focus:border-blue-400" required>
+                    <option value="">Select Student</option>
+                    <option th:each="student : ${availableStudents}" th:value="${student.id}" th:text="${student.firstName} + ' ' + ${student.lastName}"></option>
+                </select>
+            </div>
+            <button type="submit" class="neon-btn w-full py-2 rounded-lg">Enroll Selected Student</button>
+        </form>
+        <div class="mt-6 text-center space-x-4">
+            <a th:href="@{/schedules/list}" class="text-blue-600 hover:text-blue-800">Back to Schedules</a>
+        </div>
+    </div>
+</body>
+</html>

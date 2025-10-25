@@ -37,6 +37,13 @@
         <div class="text-center mb-4">
             <a th:href="@{/students/enroll}" class="text-blue-600 hover:text-blue-800">Back to Enrollment</a>
         </div>
+        <div class="mb-4">
+            <form th:action="@{/students/search}" method="get" class="flex">
+                <input type="text" name="query" placeholder="Search by name or email..." class="flex-grow p-2 border">
+                <button type="submit" class="bg-blue-500 text-white p-2">Search</button>
+            </form>
+            <a th:href="@{/students/report}" class="bg-green-500 text-white p-2 ml-2">Download Report</a>
+        </div>
         <table class="neon-table w-full">
             <thead>
                 <tr>
@@ -46,6 +53,8 @@
                     <th class="p-2">Email</th>
                     <th class="p-2">Phone</th>
                     <th class="p-2">Grade Level</th>
+                    <th class="p-2">Address</th>
+                    <th class="p-2">Guardian Name</th>
                     <th class="p-2">Enrollment Date</th>
                     <th class="p-2">Enrolled Schedules</th>
                     <th class="p-2">Actions</th>
@@ -59,6 +68,8 @@
                     <td class="p-2" th:text="${student.email}"></td>
                     <td class="p-2" th:text="${student.phone}"></td>
                     <td class="p-2" th:text="${student.gradeLevel}"></td>
+                    <td class="p-2" th:text="${student.address}"></td>
+                    <td class="p-2" th:text="${student.guardianName}"></td>
                     <td class="p-2" th:text="${student.enrollmentDate}"></td>
                     <td class="p-2" th:text="${#lists.size(student.scheduleIds)}"></td>
                     <td class="p-2">

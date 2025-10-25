@@ -26,19 +26,18 @@ public class ClassSchedule {
     private String instructor;
 
     @NotBlank(message = "Time is required")
-    @Pattern(regexp = "^([0-1][0-9]|2[0-3]):[0-5][0-9]-([0-1][0-9]|2[0-3]):[0-5][0-9]$", 
-             message = "Time must be in 'HH:MM-HH:MM' format (e.g., 09:00-10:30)")
+    @Pattern(regexp = "^([0-1][0-9]|2[0-3]):[0-5][0-9]-([0-1][0-9]|2[0-3]):[0-5][0-9]$", message = "Time must be in 'HH:MM-HH:MM' format (e.g., 09:00-10:30)")
     private String time;
 
     @NotBlank(message = "Room is required")
     private String room;
 
     @NotBlank(message = "Duration is required")
-    private String duration; // e.g., "1.5 hours"
+    private String duration;
 
     @NotBlank(message = "Max capacity is required")
     @Pattern(regexp = "^[1-9][0-9]*$", message = "Max capacity must be a positive number")
-    private String maxCapacity; // e.g., "30"
+    private String maxCapacity;
 
     @Builder.Default
     private List<String> studentIds = new ArrayList<>();

@@ -1,5 +1,10 @@
 package com.sims.service;
 
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
 import com.sims.model.ClassSchedule;
 import com.sims.model.Student;
 import com.sims.repository.ClassScheduleRepository;
@@ -10,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -22,17 +28,15 @@ public class StudentService {
     private StudentRepository studentRepository;
 
     @Autowired
-    private ClassScheduleRepository classScheduleRepository; // For relations
+    private ClassScheduleRepository classScheduleRepository;
 
     @Transactional
     public void enrollStudent(Student student) {
         logger.info("Attempting to save student: {}", student);
         try {
-            // Auto-set enrollment date if not provided
             if (student.getEnrollmentDate() == null) {
                 student.setEnrollmentDate(LocalDate.now());
             }
-            // Check for duplicate email
             if (studentRepository.findByEmail(student.getEmail()).isPresent()) {
                 throw new IllegalArgumentException("Email already exists");
             }
@@ -67,7 +71,6 @@ public class StudentService {
         logger.info("Attempting to update student: {}", student);
         try {
             if (studentRepository.existsById(student.getId())) {
-                // Check for email uniqueness if changed
                 Optional<Student> existing = studentRepository.findByEmail(student.getEmail());
                 if (existing.isPresent() && !existing.get().getId().equals(student.getId())) {
                     throw new IllegalArgumentException("Email already exists");
@@ -91,7 +94,6 @@ public class StudentService {
             Optional<Student> studentOpt = studentRepository.findById(id);
             if (studentOpt.isPresent()) {
                 Student student = studentOpt.get();
-                // Remove from schedules
                 for (String scheduleId : student.getScheduleIds()) {
                     Optional<ClassSchedule> scheduleOpt = classScheduleRepository.findById(scheduleId);
                     scheduleOpt.ifPresent(schedule -> {
@@ -137,5 +139,47 @@ public class StudentService {
             logger.error("Failed to enroll in schedule: {}", e.getMessage(), e);
             throw e;
         }
+    }
+
+    public List<Student> searchStudents(String searchTerm) {
+        if (searchTerm == null || searchTerm.trim().isEmpty()) {
+            return getAllStudents();
+        }
+        return studentRepository.findByNameOrEmailContainingIgnoreCase(searchTerm.trim());
+    }
+
+    public byte[] generateStudentReport() {
+        List<Student> students = getAllStudents();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (PdfWriter writer = new PdfWriter(baos);
+             PdfDocument pdf = new PdfDocument(writer);
+             Document document = new Document(pdf)) {
+
+            document.add(new Paragraph("Student Enrollment Report").setBold());
+            Table table = new Table(7);
+            table.addHeaderCell("ID");
+            table.addHeaderCell("First Name");
+            table.addHeaderCell("Last Name");
+            table.addHeaderCell("Email");
+            table.addHeaderCell("Phone");
+            table.addHeaderCell("Grade Level");
+            table.addHeaderCell("Enrollment Date");
+
+            for (Student student : students) {
+                table.addCell(student.getId() != null ? student.getId() : "");
+                table.addCell(student.getFirstName() != null ? student.getFirstName() : "");
+                table.addCell(student.getLastName() != null ? student.getLastName() : "");
+                table.addCell(student.getEmail() != null ? student.getEmail() : "");
+                table.addCell(student.getPhone() != null ? student.getPhone() : "");
+                table.addCell(student.getGradeLevel() != null ? student.getGradeLevel() : "");
+                table.addCell(student.getEnrollmentDate() != null ? student.getEnrollmentDate().toString() : "");
+            }
+
+            document.add(table);
+        } catch (Exception e) {
+            logger.error("Failed to generate student report: {}", e.getMessage(), e);
+            throw new RuntimeException("Report generation failed");
+        }
+        return baos.toByteArray();
     }
 }
